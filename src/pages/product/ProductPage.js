@@ -31,6 +31,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UploadModal from '../../components/common/UploadModal';
 import Checkbox from '@mui/material/Checkbox';
 import DownloadIcon from '@mui/icons-material/Download';
+import { useNavigate } from 'react-router-dom';
 
 const initState = {
   dtoList: [], // product 목록
@@ -56,6 +57,7 @@ const ProductPage = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     const params = {
@@ -188,6 +190,7 @@ const ProductPage = () => {
                   '&:hover': { backgroundColor: '#ff9ee8' },
                   mr: 1,
                 }}
+                onClick={() => navigate('/product/register')}
               >
                 상품 등록
               </Button>
