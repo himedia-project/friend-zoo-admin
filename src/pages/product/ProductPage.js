@@ -26,6 +26,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import PageComponent from '../../components/common/PageComponent';
 import AlertModal from '../../components/common/AlertModal';
+import { registerProductExcel } from '../../api/excelApi';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import UploadModal from '../../components/common/UploadModal';
 
 const initState = {
   dtoList: [], // product 목록
@@ -46,6 +49,9 @@ const ProductPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const fetchProducts = async () => {
     const params = {
@@ -89,6 +95,44 @@ const ProductPage = () => {
     }
   };
 
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.xlsx')) {
+      try {
+        await registerProductExcel(file);
+        setUploadModalOpen(true);
+        fetchProducts();
+      } catch (error) {
+        console.error('엑셀 업로드 실패:', error);
+      }
+    }
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      await registerProductExcel(file);
+      setShowUploadModal(false);
+      setUploadModalOpen(true); // 성공 알림 모달
+      fetchProducts();
+    } catch (error) {
+      console.error('엑셀 업로드 실패:', error);
+    }
+  };
+
   return (
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
       <Header />
@@ -110,9 +154,21 @@ const ProductPage = () => {
                 sx={{
                   backgroundColor: '#FFB7F2',
                   '&:hover': { backgroundColor: '#ff9ee8' },
+                  mr: 1,
                 }}
               >
                 상품 등록
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                sx={{
+                  backgroundColor: '#217346',
+                  '&:hover': { backgroundColor: '#1a5c38' },
+                }}
+                onClick={() => setShowUploadModal(true)}
+              >
+                엑셀 업로드
               </Button>
             </Grid>
           </Grid>
@@ -240,6 +296,19 @@ const ProductPage = () => {
         message="정말 삭제하시겠습니까?"
         isSuccess={false}
         onConfirm={handleDeleteConfirm}
+      />
+      <AlertModal
+        open={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        title="엑셀 업로드"
+        message="업로드가 완료되었습니다!"
+        isSuccess={true}
+        onConfirm={() => setUploadModalOpen(false)}
+      />
+      <UploadModal
+        open={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUpload={handleFileUpload}
       />
     </div>
   );
