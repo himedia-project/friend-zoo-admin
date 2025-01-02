@@ -13,12 +13,40 @@ import {
   ListItemText,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutPost } from '../../api/loginApi';
+import { useNavigate } from 'react-router-dom';
+import AlertModal from '../common/AlertModal';
+import { logout } from '../../slices/loginSlice';
 
 const Header = () => {
+  const { email } = useSelector((state) => state.loginSlice);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutPost();
+      dispatch(logout());
+      setAlertMessage('로그아웃이 되었습니다');
+      setOpenAlert(true);
+    } catch (error) {
+      setAlertMessage('로그아웃 처리 중 오류가 발생했습니다');
+      setOpenAlert(true);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+    navigate('/login');
   };
 
   const menuItems = [
@@ -27,7 +55,11 @@ const Header = () => {
     { text: '콘텐츠', path: '/content' },
     { text: '회원', path: '/member' },
     { text: '주문', path: '/order' },
-    { text: '로그인', path: '/login' },
+    {
+      text: email ? '로그아웃' : '로그인',
+      path: '/login',
+      onClick: email ? handleLogout : null,
+    },
   ];
 
   const drawer = (
@@ -67,7 +99,8 @@ const Header = () => {
               <Button
                 key={item.text}
                 component={Link}
-                to={item.path}
+                to={item.onClick ? '#' : item.path}
+                onClick={item.onClick}
                 sx={{
                   color: '#fff',
                   fontSize: '16px',
@@ -99,6 +132,12 @@ const Header = () => {
       >
         {drawer}
       </Drawer>
+
+      <AlertModal
+        open={openAlert}
+        message={alertMessage}
+        onClose={handleCloseAlert}
+      />
     </>
   );
 };
