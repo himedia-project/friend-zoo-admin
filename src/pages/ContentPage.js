@@ -27,6 +27,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import PageComponent from '../components/common/PageComponent';
 import AlertModal from '../components/common/AlertModal';
 import Header from '../components/layouts/Header';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { registerContentExcel } from '../api/excelApi';
+import UploadModal from '../components/common/UploadModal';
 
 const initState = {
   dtoList: [], // 콘텐츠 목록
@@ -47,6 +50,8 @@ const ContentPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const fetchContents = async () => {
     const params = {
@@ -91,6 +96,17 @@ const ContentPage = () => {
     }
   };
 
+  const handleFileUpload = async (file) => {
+    try {
+      await registerContentExcel(file);
+      setShowUploadModal(false);
+      setUploadModalOpen(true); // 성공 알림 모달
+      fetchContents();
+    } catch (error) {
+      console.error('엑셀 업로드 실패:', error);
+    }
+  };
+
   return (
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
       <Header />
@@ -112,9 +128,21 @@ const ContentPage = () => {
                 sx={{
                   backgroundColor: '#FFB7F2',
                   '&:hover': { backgroundColor: '#ff9ee8' },
+                  mr: 1,
                 }}
               >
                 콘텐츠 등록
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                sx={{
+                  backgroundColor: '#217346',
+                  '&:hover': { backgroundColor: '#1a5c38' },
+                }}
+                onClick={() => setShowUploadModal(true)}
+              >
+                엑셀 업로드
               </Button>
             </Grid>
           </Grid>
@@ -228,6 +256,19 @@ const ContentPage = () => {
         message="정말 삭제하시겠습니까?"
         isSuccess={false}
         onConfirm={handleDeleteConfirm}
+      />
+      <AlertModal
+        open={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        title="엑셀 업로드"
+        message="업로드가 완료되었습니다!"
+        isSuccess={true}
+        onConfirm={() => setUploadModalOpen(false)}
+      />
+      <UploadModal
+        open={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUpload={handleFileUpload}
       />
     </div>
   );
