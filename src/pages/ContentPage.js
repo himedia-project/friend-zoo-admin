@@ -158,9 +158,6 @@ const ContentPage = () => {
                   콘텐츠명
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  콘텐츠 내용
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   이미지
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
@@ -183,7 +180,6 @@ const ContentPage = () => {
                   <TableCell>{content.id}</TableCell>
                   <TableCell>{content.divisionName}</TableCell>
                   <TableCell>{content.title}</TableCell>
-                  <TableCell>{content.body}</TableCell>
                   <TableCell>
                     {content.uploadFileNames && content.uploadFileNames[0] && (
                       <Box
