@@ -44,17 +44,42 @@ const Header = () => {
     }
   };
 
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-    navigate('/login');
+  const checkLoginAndNavigate = (path) => {
+    if (!email) {
+      setAlertMessage('로그인을 해주세요!');
+      setOpenAlert(true);
+      return false;
+    }
+    navigate(path);
+    return true;
   };
 
   const menuItems = [
-    { text: '홈', path: '/' },
-    { text: '상품', path: '/product' },
-    { text: '콘텐츠', path: '/content' },
-    { text: '회원', path: '/member' },
-    { text: '주문', path: '/order' },
+    {
+      text: '홈',
+      path: '/',
+      onClick: () => checkLoginAndNavigate('/'),
+    },
+    {
+      text: '상품',
+      path: '/product',
+      onClick: () => checkLoginAndNavigate('/product'),
+    },
+    {
+      text: '콘텐츠',
+      path: '/content',
+      onClick: () => checkLoginAndNavigate('/content'),
+    },
+    {
+      text: '회원',
+      path: '/member',
+      onClick: () => checkLoginAndNavigate('/member'),
+    },
+    {
+      text: '주문',
+      path: '/order',
+      onClick: () => checkLoginAndNavigate('/order'),
+    },
     {
       text: email ? '로그아웃' : '로그인',
       path: '/login',
@@ -73,6 +98,13 @@ const Header = () => {
       </List>
     </Box>
   );
+
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+    if (!email) {
+      navigate('/login');
+    }
+  };
 
   return (
     <>
@@ -98,8 +130,6 @@ const Header = () => {
             {menuItems.map((item) => (
               <Button
                 key={item.text}
-                component={Link}
-                to={item.onClick ? '#' : item.path}
                 onClick={item.onClick}
                 sx={{
                   color: '#fff',
