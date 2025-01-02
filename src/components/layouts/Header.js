@@ -122,9 +122,17 @@ const Header = () => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            sx={{
+              flexGrow: 1,
+              display: {
+                xs: 'none',
+                sm: 'block',
+                fontSize: '25px',
+                fontWeight: 'bold',
+              },
+            }}
           >
-            로고
+            FriendZoo 쇼핑몰 관리페이지
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {menuItems.map((item) => (
