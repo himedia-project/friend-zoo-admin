@@ -61,6 +61,11 @@ const Header = () => {
       onClick: () => checkLoginAndNavigate('/'),
     },
     {
+      text: '카테고리',
+      path: '/category',
+      onClick: () => checkLoginAndNavigate('/category'),
+    },
+    {
       text: '상품',
       path: '/product',
       onClick: () => checkLoginAndNavigate('/product'),
