@@ -8,7 +8,14 @@ import {
   Typography,
 } from '@mui/material';
 
-const AlertModal = ({ open, onClose, title, message, isSuccess }) => {
+const AlertModal = ({
+  open,
+  onClose,
+  title,
+  message,
+  isSuccess,
+  onConfirm,
+}) => {
   return (
     <Dialog
       open={open}
@@ -34,7 +41,7 @@ const AlertModal = ({ open, onClose, title, message, isSuccess }) => {
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button
-          onClick={onClose}
+          onClick={onConfirm || onClose}
           sx={{
             bgcolor: '#FFB7F2',
             color: '#2A0934',

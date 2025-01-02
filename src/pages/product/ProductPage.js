@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/layouts/Header';
-import { getList } from '../../api/productApi';
+import { getList, remove } from '../../api/productApi';
 import { API_SERVER_HOST } from '../../config/apiConfig';
 import {
   Container,
@@ -25,6 +25,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import PageComponent from '../../components/common/PageComponent';
+import AlertModal from '../../components/common/AlertModal';
 
 const initState = {
   dtoList: [], // product 목록
@@ -43,6 +44,8 @@ const ProductPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = async () => {
     const params = {
@@ -68,6 +71,22 @@ const ProductPage = () => {
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleDeleteClick = (product) => {
+    console.log('handleDeleteClick product', product);
+    setSelectedProduct(product);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await remove(selectedProduct.id);
+      setDeleteModalOpen(false);
+      fetchProducts(); // 목록 새로고침
+    } catch (error) {
+      console.error('상품 삭제 실패:', error);
+    }
   };
 
   return (
@@ -194,7 +213,11 @@ const ProductPage = () => {
                     <IconButton size="small" sx={{ color: '#FFB7F2' }}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton size="small" sx={{ color: '#ff8484' }}>
+                    <IconButton
+                      size="small"
+                      sx={{ color: '#ff8484' }}
+                      onClick={() => handleDeleteClick(product)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -210,6 +233,14 @@ const ProductPage = () => {
           handlePageChange={handlePageChange}
         />
       </Container>
+      <AlertModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title="상품 삭제"
+        message="정말 삭제하시겠습니까?"
+        isSuccess={false}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 };
