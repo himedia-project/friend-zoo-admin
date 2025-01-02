@@ -16,17 +16,22 @@ export const registerProductExcel = async (file) => {
 
 // product excel download
 export const downloadProductExcel = async (idList) => {
-  const response = await axiosInstance.get(`${host}/product/excel/download`, {
-    params: {
-      idList: idList,
+  const response = await axiosInstance.post(
+    `${host}/product/excel/download`,
+    { idList: idList },
+    {
+      responseType: 'blob',
+      headers: {
+        Accept: 'application/octet-stream',
+        'Content-Type': 'application/json',
+      },
+      // axios가 헤더를 처리하는 방식 설정
+      transformResponse: [(data) => data], // 응답 데이터 변환 방지
+      maxRedirects: 0,
+      validateStatus: (status) => status >= 200 && status < 400,
     },
-    responseType: 'blob',
-    headers: {
-      Accept: 'application/octet-stream',
-      'Content-Type': 'application/json',
-    },
-  });
-  return response.data;
+  );
+  return response;
 };
 
 // content excel register

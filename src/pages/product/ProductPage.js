@@ -26,9 +26,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import PageComponent from '../../components/common/PageComponent';
 import AlertModal from '../../components/common/AlertModal';
-import { registerProductExcel } from '../../api/excelApi';
+import { registerProductExcel, downloadProductExcel } from '../../api/excelApi';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UploadModal from '../../components/common/UploadModal';
+import Checkbox from '@mui/material/Checkbox';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const initState = {
   dtoList: [], // product 목록
@@ -50,8 +52,10 @@ const ProductPage = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   const fetchProducts = async () => {
     const params = {
@@ -95,33 +99,6 @@ const ProductPage = () => {
     }
   };
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file && file.name.endsWith('.xlsx')) {
-      try {
-        await registerProductExcel(file);
-        setUploadModalOpen(true);
-        fetchProducts();
-      } catch (error) {
-        console.error('엑셀 업로드 실패:', error);
-      }
-    }
-  };
-
   const handleFileUpload = async (file) => {
     try {
       await registerProductExcel(file);
@@ -130,6 +107,61 @@ const ProductPage = () => {
       fetchProducts();
     } catch (error) {
       console.error('엑셀 업로드 실패:', error);
+    }
+  };
+
+  const handleSelectProduct = (productId) => {
+    setSelectedProducts((prev) => {
+      if (prev.includes(productId)) {
+        return prev.filter((id) => id !== productId);
+      } else {
+        return [...prev, productId];
+      }
+    });
+  };
+
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      setSelectedProducts(products.map((product) => product.id));
+    } else {
+      setSelectedProducts([]);
+    }
+  };
+
+  const handleDownload = async () => {
+    console.log('handleDownload selectedProducts:', selectedProducts);
+    if (selectedProducts.length === 0) {
+      setAlertMessage('상품 체크를 먼저 해주셔야 합니다!');
+      setShowAlert(true);
+      return;
+    }
+
+    try {
+      const response = await downloadProductExcel(selectedProducts);
+      // 소문자로 된 헤더 키를 사용
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = 'products.xlsx'; // 기본 파일명
+      console.log('Content-Disposition:', contentDisposition); // 디버깅용
+
+      if (contentDisposition) {
+        const matches = contentDisposition.match(/filename="(.+)"/);
+        if (matches && matches[1]) {
+          filename = decodeURIComponent(matches[1]);
+        }
+      }
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Excel download failed:', error);
+      setAlertMessage('다운로드 중 오류가 발생했습니다.');
+      setShowAlert(true);
     }
   };
 
@@ -165,10 +197,23 @@ const ProductPage = () => {
                 sx={{
                   backgroundColor: '#217346',
                   '&:hover': { backgroundColor: '#1a5c38' },
+                  mr: 1,
                 }}
                 onClick={() => setShowUploadModal(true)}
               >
                 엑셀 업로드
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<DownloadIcon />}
+                sx={{
+                  backgroundColor: '#217346',
+                  '&:hover': { backgroundColor: '#1a5c38' },
+                  mr: 1,
+                }}
+                onClick={handleDownload}
+              >
+                엑셀 다운로드
               </Button>
             </Grid>
           </Grid>
@@ -202,6 +247,16 @@ const ProductPage = () => {
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: '#fff5fc' }}>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  <Checkbox
+                    checked={selectedProducts.length === products.length}
+                    indeterminate={
+                      selectedProducts.length > 0 &&
+                      selectedProducts.length < products.length
+                    }
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   ID
                 </TableCell>
@@ -240,6 +295,12 @@ const ProductPage = () => {
             <TableBody>
               {products.map((product) => (
                 <TableRow key={product.id} hover>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedProducts.includes(product.id)}
+                      onChange={() => handleSelectProduct(product.id)}
+                    />
+                  </TableCell>
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.categoryName}</TableCell>
                   <TableCell>{product.name}</TableCell>
@@ -304,6 +365,14 @@ const ProductPage = () => {
         message="업로드가 완료되었습니다!"
         isSuccess={true}
         onConfirm={() => setUploadModalOpen(false)}
+      />
+      <AlertModal
+        open={showAlert}
+        onClose={() => setShowAlert(false)}
+        title="알림"
+        message={alertMessage}
+        isSuccess={false}
+        onConfirm={() => setShowAlert(false)}
       />
       <UploadModal
         open={showUploadModal}
