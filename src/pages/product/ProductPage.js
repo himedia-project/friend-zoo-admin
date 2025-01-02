@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/layouts/Header';
 import { getList } from '../../api/productApi';
+import { API_SERVER_HOST } from '../../config/apiConfig';
 import {
   Container,
   Grid,
@@ -24,6 +25,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 
+const initState = {
+  dtoList: [], // product 목록
+  pageNumList: [],
+  pageRequestDTO: null,
+  prev: false,
+  prevPage: 0,
+  nextPage: 0,
+  next: false,
+  totalCount: 0,
+  current: 0,
+};
+
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,9 +45,9 @@ const ProductPage = () => {
     const params = {
       page: 1,
       size: 10,
-      sort: 'id',
+      sort: 'desc',
       name: searchTerm,
-      categoryId: '',
+      categoryId: null,
     };
 
     try {
@@ -106,30 +119,67 @@ const ProductPage = () => {
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: '#fff5fc' }}>
-                <TableCell>ID</TableCell>
-                <TableCell>카테고리</TableCell>
-                <TableCell>상품명</TableCell>
-                <TableCell>가격</TableCell>
-                <TableCell>할인가격</TableCell>
-                <TableCell>재고</TableCell>
-                <TableCell>이미지</TableCell>
-                <TableCell>등록일</TableCell>
-                <TableCell>수정일</TableCell>
-                {/* <TableCell align="center">관리</TableCell> */}
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  ID
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  카테고리
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  상품명
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  가격
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  할인가격
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  재고
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  이미지
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  등록일
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  수정일
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{ fontWeight: 'bold', color: '#2A0934' }}
+                >
+                  관리
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {products.map((product) => (
                 <TableRow key={product.id} hover>
                   <TableCell>{product.id}</TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  <TableCell>{product.categoryName}</TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.price?.toLocaleString()}원</TableCell>
                   <TableCell>
                     {product.discountPrice?.toLocaleString()}원
                   </TableCell>
                   <TableCell>{product.stockNumber}</TableCell>
-                  <TableCell>{product.uploadFileNames[0]}</TableCell>
+                  <TableCell>
+                    {product.uploadFileNames && product.uploadFileNames[0] && (
+                      <Box
+                        component="img"
+                        src={`${API_SERVER_HOST}/api/admin/product/view/${product.uploadFileNames[0]}`}
+                        alt={product.name}
+                        sx={{
+                          width: 50,
+                          height: 50,
+                          objectFit: 'cover',
+                          borderRadius: 1,
+                        }}
+                      />
+                    )}
+                  </TableCell>
                   <TableCell>{product.createdAt}</TableCell>
                   <TableCell>{product.modifiedAt}</TableCell>
                   <TableCell align="center">

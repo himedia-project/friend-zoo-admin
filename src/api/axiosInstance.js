@@ -20,6 +20,7 @@ const refreshJWT = async () => {
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = store.getState().loginSlice.accessToken;
+    console.log('axiosInstance.interceptors.request.use. token', token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
