@@ -24,6 +24,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
+import PageComponent from '../../components/common/PageComponent';
 
 const initState = {
   dtoList: [], // product 목록
@@ -40,10 +41,12 @@ const initState = {
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const fetchProducts = async () => {
     const params = {
-      page: 1,
+      page: page,
       size: 10,
       sort: 'desc',
       name: searchTerm,
@@ -53,6 +56,7 @@ const ProductPage = () => {
     try {
       const response = await getList(params);
       setProducts(response.dtoList || []);
+      setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('상품 목록 로딩 실패:', error);
     }
@@ -60,7 +64,11 @@ const ProductPage = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page]);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
 
   return (
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
@@ -195,6 +203,12 @@ const ProductPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <PageComponent
+          page={page}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
+        />
       </Container>
     </div>
   );
