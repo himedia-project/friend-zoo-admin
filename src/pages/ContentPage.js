@@ -127,7 +127,7 @@ const ContentPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="상품명 검색"
+                  placeholder="콘텐츠명 검색"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
