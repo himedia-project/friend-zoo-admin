@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../components/layouts/Header';
+import Header from '../../components/layouts/Header';
 import {
   Box,
   Container,
@@ -13,17 +13,31 @@ import {
   TableCell,
   Paper,
   IconButton,
+  Button,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import CategoryModal from '../../components/category/CategoryModal';
 import {
   getProductCategoryList,
   getContentCategoryList,
-} from '../api/categoryApi';
-import { API_SERVER_HOST } from '../config/apiConfig';
+  registerProductCategory,
+  registerContentCategory,
+  removeProductCategory,
+  removeContentCategory,
+} from '../../api/categoryApi';
+import { API_SERVER_HOST } from '../../config/apiConfig';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AlertModal from '../../components/common/AlertModal';
 
 const CategoryPage = () => {
   const [productCategories, setProductCategories] = useState([]);
   const [contentCategories, setContentCategories] = useState([]);
+  const [openProductModal, setOpenProductModal] = useState(false);
+  const [openContentModal, setOpenContentModal] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categoryType, setCategoryType] = useState('');
 
   useEffect(() => {
     fetchCategories();
@@ -40,18 +54,74 @@ const CategoryPage = () => {
     }
   };
 
+  const handleProductSubmit = async (formData) => {
+    try {
+      await registerProductCategory(formData);
+      fetchCategories(); // 목록 새로고침
+    } catch (error) {
+      console.error('상품 카테고리 등록 실패:', error);
+    }
+  };
+
+  const handleContentSubmit = async (formData) => {
+    try {
+      await registerContentCategory(formData);
+      fetchCategories(); // 목록 새로고침
+    } catch (error) {
+      console.error('콘텐츠 카테고리 등록 실패:', error);
+    }
+  };
+
+  const handleDeleteClick = (category, type) => {
+    setSelectedCategory(category);
+    setCategoryType(type);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      if (categoryType === 'product') {
+        await removeProductCategory(selectedCategory.categoryId);
+      } else {
+        await removeContentCategory(selectedCategory.categoryId);
+      }
+      setDeleteModalOpen(false);
+      fetchCategories(); // 목록 새로고침
+    } catch (error) {
+      console.error('카테고리 삭제 실패:', error);
+    }
+  };
+
   return (
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
       <Header />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         {/* 상품 카테고리 섹션 */}
         <Box sx={{ mb: 4 }}>
-          <Typography
-            variant="h4"
-            sx={{ color: '#2A0934', fontWeight: 'bold', mb: 3 }}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={3}
           >
-            상품 카테고리
-          </Typography>
+            <Typography
+              variant="h4"
+              sx={{ color: '#2A0934', fontWeight: 'bold' }}
+            >
+              상품 카테고리
+            </Typography>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={() => setOpenProductModal(true)}
+              sx={{
+                bgcolor: '#FFB7F2',
+                color: 'white',
+                '&:hover': { bgcolor: '#ff99e6' },
+              }}
+            >
+              카테고리 추가
+            </Button>
+          </Box>
           <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
             <Table>
               <TableHead>
@@ -97,6 +167,13 @@ const CategoryPage = () => {
                       <IconButton size="small" sx={{ color: '#FFB7F2' }}>
                         <EditIcon />
                       </IconButton>
+                      <IconButton
+                        size="small"
+                        sx={{ color: '#ff8484' }}
+                        onClick={() => handleDeleteClick(category, 'product')}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -107,12 +184,30 @@ const CategoryPage = () => {
 
         {/* 콘텐츠 카테고리 섹션 */}
         <Box sx={{ mb: 4 }}>
-          <Typography
-            variant="h4"
-            sx={{ color: '#2A0934', fontWeight: 'bold', mb: 3 }}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={3}
           >
-            콘텐츠 카테고리
-          </Typography>
+            <Typography
+              variant="h4"
+              sx={{ color: '#2A0934', fontWeight: 'bold' }}
+            >
+              콘텐츠 카테고리
+            </Typography>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={() => setOpenContentModal(true)}
+              sx={{
+                bgcolor: '#FFB7F2',
+                color: 'white',
+                '&:hover': { bgcolor: '#ff99e6' },
+              }}
+            >
+              카테고리 추가
+            </Button>
+          </Box>
           <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
             <Table>
               <TableHead>
@@ -158,6 +253,13 @@ const CategoryPage = () => {
                       <IconButton size="small" sx={{ color: '#FFB7F2' }}>
                         <EditIcon />
                       </IconButton>
+                      <IconButton
+                        size="small"
+                        sx={{ color: '#ff8484' }}
+                        onClick={() => handleDeleteClick(category, 'content')}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -165,6 +267,29 @@ const CategoryPage = () => {
             </Table>
           </TableContainer>
         </Box>
+
+        <CategoryModal
+          open={openProductModal}
+          handleClose={() => setOpenProductModal(false)}
+          title="상품 카테고리 등록"
+          onSubmit={handleProductSubmit}
+        />
+
+        <CategoryModal
+          open={openContentModal}
+          handleClose={() => setOpenContentModal(false)}
+          title="콘텐츠 카테고리 등록"
+          onSubmit={handleContentSubmit}
+        />
+
+        <AlertModal
+          open={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          title="카테고리 삭제"
+          message="정말 삭제하시겠습니까?"
+          isSuccess={false}
+          onConfirm={handleDeleteConfirm}
+        />
       </Container>
     </div>
   );

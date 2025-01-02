@@ -6,7 +6,7 @@ import ProductPage from './pages/product/ProductPage';
 import MemberPage from './pages/MemberPage';
 import OrderPage from './pages/OrderPage';
 import ContentPage from './pages/ContentPage';
-import CategoryPage from './pages/CategoryPage';
+import CategoryPage from './pages/category/CategoryPage';
 import ProductRegisterPage from './pages/product/ProductRegisterPage';
 import ProductDetailPage from './pages/product/ProductDetailPage';
 import ProductModifyPage from './pages/product/ProductModifyPage';
