@@ -2,10 +2,14 @@ import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import ProductPage from './pages/ProductPage';
+import ProductPage from './pages/product/ProductPage';
 import MemberPage from './pages/MemberPage';
 import OrderPage from './pages/OrderPage';
 import ContentPage from './pages/ContentPage';
+import CategoryPage from './pages/CategoryPage';
+import ProductRegisterPage from './pages/product/ProductRegisterPage';
+import ProductDetailPage from './pages/product/ProductDetailPage';
+import ProductModifyPage from './pages/product/ProductModifyPage';
 
 function App() {
   return (
@@ -15,8 +19,20 @@ function App() {
         <Route path="/" element={<HomePage />} />
         {/* 로그인 */}
         <Route path="/login" element={<LoginPage />} />
+        {/* 카테고리 */}
+        <Route path="/category" element={<CategoryPage />} />
         {/* 상품 */}
+        {/* 상품조회 */}
         <Route path="/product" element={<ProductPage />} />
+        {/* 상품등록 */}
+        <Route path="/product/register" element={<ProductRegisterPage />} />
+        {/* 상품상세 */}
+        <Route path="/product/:productId" element={<ProductDetailPage />} />
+        {/* 상품수정 */}
+        <Route
+          path="/product/modify/:productId"
+          element={<ProductModifyPage />}
+        />
         {/* 콘텐츠 */}
         <Route path="/content" element={<ContentPage />} />
         {/* 회원 */}
