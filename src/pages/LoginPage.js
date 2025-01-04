@@ -43,7 +43,7 @@ const LoginPage = () => {
       setPassword('');
     } catch (error) {
       setIsSuccess(false);
-      setAlertMessage('로그인에 실패하였습니다');
+      setAlertMessage(error.response.data.errMsg);
       setOpenAlert(true);
     }
   };
