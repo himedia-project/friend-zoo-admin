@@ -1,6 +1,10 @@
 FROM node:alpine as build
 WORKDIR /app
 
+# 환경변수 설정
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 COPY package.json package-lock.json ./
 RUN npm install --force --silent
 
