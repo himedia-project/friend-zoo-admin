@@ -88,7 +88,7 @@ const Header = () => {
     {
       text: email ? '로그아웃' : '로그인',
       path: '/login',
-      onClick: email ? handleLogout : null,
+      onClick: email ? handleLogout : () => navigate('/login'),
     },
   ];
 
