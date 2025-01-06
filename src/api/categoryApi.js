@@ -1,11 +1,8 @@
-import { API_SERVER_HOST } from '../config/apiConfig';
 import axiosInstance from './axiosInstance';
-
-const host = `${API_SERVER_HOST}/api/admin`;
 
 // list
 export const getProductCategoryList = async () => {
-  const response = await axiosInstance.get(`${host}/product/category/list`);
+  const response = await axiosInstance.get(`/product/category/list`);
   return response.data;
 };
 
@@ -17,23 +14,19 @@ export const registerProductCategory = async (data) => {
       'Content-Type': 'multipart/form-data',
     },
   };
-  const response = await axiosInstance.post(
-    `${host}/product/category`,
-    data,
-    header,
-  );
+  const response = await axiosInstance.post(`/product/category`, data, header);
   return response.data;
 };
 
 // remove
 export const removeProductCategory = async (id) => {
-  const response = await axiosInstance.delete(`${host}/product/category/${id}`);
+  const response = await axiosInstance.delete(`/product/category/${id}`);
   return response.data;
 };
 
 // list
 export const getContentCategoryList = async () => {
-  const response = await axiosInstance.get(`${host}/content/category/list`);
+  const response = await axiosInstance.get(`/content/category/list`);
   return response.data;
 };
 
@@ -44,16 +37,12 @@ export const registerContentCategory = async (data) => {
       'Content-Type': 'multipart/form-data',
     },
   };
-  const response = await axiosInstance.post(
-    `${host}/content/category`,
-    data,
-    header,
-  );
+  const response = await axiosInstance.post(`/content/category`, data, header);
   return response.data;
 };
 
 // remove
 export const removeContentCategory = async (id) => {
-  const response = await axiosInstance.delete(`${host}/content/category/${id}`);
+  const response = await axiosInstance.delete(`/content/category/${id}`);
   return response.data;
 };

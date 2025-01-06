@@ -1,14 +1,11 @@
-import { API_SERVER_HOST } from '../config/apiConfig';
 import axiosInstance from './axiosInstance';
-
-const host = `${API_SERVER_HOST}/api/admin`;
 
 // product excel register
 export const registerProductExcel = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   const response = await axiosInstance.post(
-    `${host}/product/excel/register`,
+    `/product/excel/register`,
     formData,
   );
   return response.data;
@@ -17,7 +14,7 @@ export const registerProductExcel = async (file) => {
 // product excel download
 export const downloadProductExcel = async (idList) => {
   const response = await axiosInstance.post(
-    `${host}/product/excel/download`,
+    `/product/excel/download`,
     { idList: idList },
     {
       responseType: 'blob',
@@ -39,7 +36,7 @@ export const registerContentExcel = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   const response = await axiosInstance.post(
-    `${host}/content/excel/register`,
+    `/content/excel/register`,
     formData,
   );
   return response.data;
