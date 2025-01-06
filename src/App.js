@@ -10,6 +10,7 @@ import CategoryPage from './pages/category/CategoryPage';
 import ProductRegisterPage from './pages/product/ProductRegisterPage';
 import ProductDetailPage from './pages/product/ProductDetailPage';
 import ProductModifyPage from './pages/product/ProductModifyPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function App() {
         <Route path="/member" element={<MemberPage />} />
         {/* 주문 */}
         <Route path="/order" element={<OrderPage />} />
+        {/* 404 */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
