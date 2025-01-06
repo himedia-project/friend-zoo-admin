@@ -58,7 +58,7 @@ const LoginPage = () => {
   return (
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
       <Header />
-      <Container maxWidth="sm">
+      <Container maxWidth="xs">
         <Box sx={{ mt: 8, mb: 4 }}>
           <Paper
             elevation={3}
@@ -66,6 +66,8 @@ const LoginPage = () => {
               p: 4,
               borderRadius: 2,
               boxShadow: '0 4px 20px rgba(255, 183, 242, 0.25)',
+              maxWidth: '400px',
+              margin: '0 auto',
             }}
           >
             <Typography
