@@ -170,7 +170,15 @@ const ProductPage = () => {
   return (
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
       <Header />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container
+        maxWidth={false}
+        sx={{
+          mt: 4,
+          mb: 4,
+          px: { xs: 2, sm: 3, md: 4, lg: 6 }, // 반응형 패딩
+          maxWidth: { xl: '1400px' }, // 큰 화면에서 최대 너비
+        }}
+      >
         <Box sx={{ mb: 4 }}>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item>
@@ -306,7 +314,16 @@ const ProductPage = () => {
                   </TableCell>
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.categoryName}</TableCell>
-                  <TableCell>{product.name}</TableCell>
+                  <TableCell
+                    sx={{
+                      maxWidth: '200px', // 최대 너비 설정
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {product.name}
+                  </TableCell>
                   <TableCell>{product.price?.toLocaleString()}원</TableCell>
                   <TableCell>
                     {product.discountPrice?.toLocaleString()}원

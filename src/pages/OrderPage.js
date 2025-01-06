@@ -164,9 +164,9 @@ const OrderPage = () => {
                   <TableCell>{order.email}</TableCell>
                   <TableCell>{order.orderDate}</TableCell>
                   <TableCell>
-                    {order.orderStatus === 'ORDER' ? '주문' : '취소'}
+                    {order.orderStatus === 'ORDER' ? '주문중' : '취소'}
                   </TableCell>
-                  <TableCell>{order.totalPrice}</TableCell>
+                  <TableCell>{order.totalPrice.toLocaleString()}원</TableCell>
                   <TableCell align="center">
                     <IconButton size="small" sx={{ color: '#FFB7F2' }}>
                       <EditIcon />
