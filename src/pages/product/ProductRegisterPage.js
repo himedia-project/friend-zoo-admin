@@ -19,6 +19,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertModal from '../../components/common/AlertModal';
 import { getProductCategoryList } from '../../api/categoryApi';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ProductRegisterPage = () => {
   const navigate = useNavigate();
@@ -112,12 +113,25 @@ const ProductRegisterPage = () => {
       <Header />
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-          <Typography
-            variant="h4"
-            sx={{ mb: 4, color: '#2A0934', fontWeight: 'bold' }}
-          >
-            상품 등록
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+            <Button
+              onClick={() => navigate(-1)}
+              startIcon={<ArrowBackIcon />}
+              sx={{
+                mr: 2,
+                color: '#2A0934',
+                '&:hover': { backgroundColor: 'rgba(42, 9, 52, 0.04)' },
+              }}
+            >
+              뒤로가기
+            </Button>
+            <Typography
+              variant="h4"
+              sx={{ color: '#2A0934', fontWeight: 'bold' }}
+            >
+              상품 등록
+            </Typography>
+          </Box>
 
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
