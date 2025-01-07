@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/layouts/Header';
 import { getList, remove } from '../../api/productApi';
-import { API_SERVER_HOST } from '../../config/apiConfig';
+import { API_SERVER_HOST, FRONT_USER_HOST } from '../../config/apiConfig';
 import {
   Container,
   Grid,
@@ -320,11 +320,22 @@ const ProductPage = () => {
                   <TableCell>{product.categoryName}</TableCell>
                   <TableCell
                     sx={{
-                      maxWidth: '200px', // 최대 너비 설정
+                      maxWidth: '200px',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        color: '#FFB7F2',
+                      },
                     }}
+                    onClick={() =>
+                      window.open(
+                        `${FRONT_USER_HOST}/product/${product.id}`,
+                        '_blank',
+                      )
+                    }
                   >
                     {product.name}
                   </TableCell>
