@@ -65,8 +65,21 @@ const ProductRegisterPage = () => {
     setPreviewUrls(urls);
   };
 
+  const checkValidation = () => {
+    if (files.length === 0) {
+      setAlertMessage('최소 1개 이상의 상품 이미지를 등록해주세요.');
+      setShowAlert(true);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!checkValidation()) {
+      return;
+    }
 
     const productData = new FormData();
     Object.keys(formData).forEach((key) => {
@@ -204,7 +217,7 @@ const ProductRegisterPage = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={15}>
                 <Button
                   variant="outlined"
                   component="label"
@@ -218,7 +231,7 @@ const ProductRegisterPage = () => {
                     },
                   }}
                 >
-                  이미지 업로드
+                  이미지 업로드 *
                   <input
                     type="file"
                     hidden
