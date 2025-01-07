@@ -141,6 +141,10 @@ const ProductPage = () => {
     try {
       const response = await downloadProductExcel(selectedProducts);
       // 소문자로 된 헤더 키를 사용
+
+      // 응답 헤더 확인을 위한 로깅
+      console.log('Download response headers:', response.headers);
+
       const contentDisposition = response.headers['content-disposition'];
       let filename = 'products.xlsx'; // 기본 파일명
       console.log('Content-Disposition:', contentDisposition); // 디버깅용
