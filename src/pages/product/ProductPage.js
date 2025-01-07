@@ -330,12 +330,12 @@ const ProductPage = () => {
                         color: '#FFB7F2',
                       },
                     }}
-                    onClick={() =>
-                      window.open(
-                        `${FRONT_USER_HOST}/product/${product.id}`,
-                        '_blank',
-                      )
-                    }
+                    // onClick={() =>
+                    //   window.open(
+                    //     `${FRONT_USER_HOST}/product/${product.id}`,
+                    //     '_blank',
+                    //   )
+                    // }
                   >
                     {product.name}
                   </TableCell>
