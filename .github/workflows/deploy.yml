@@ -24,10 +24,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Docker 이미지 생성
-        run: docker build \
-          --build-arg REACT_APP_API_URL=http://43.200.239.220:8080 \
-          --build-arg REACT_APP_FRONT_USER_URL=http://43.200.239.220:3000 \
-          -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }} .
+        run: docker build --build-arg REACT_APP_API_URL=http://43.200.239.220:8080 --build-arg REACT_APP_FRONT_USER_URL=http://43.200.239.220:3000 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }} .
 
       - name: Docker Hub에 Docker 이미지 Push하기
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
