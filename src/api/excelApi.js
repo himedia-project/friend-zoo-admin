@@ -19,11 +19,11 @@ export const downloadProductExcel = async (idList) => {
     {
       responseType: 'blob',
       headers: {
-        Accept: 'application/octet-stream',
+        Accept:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Type': 'application/json',
       },
-      // axios가 헤더를 처리하는 방식 설정
-      transformResponse: [(data) => data], // 응답 데이터 변환 방지
+      transformResponse: [(data) => data],
       maxRedirects: 0,
       validateStatus: (status) => status >= 200 && status < 400,
     },
