@@ -32,6 +32,7 @@ import UploadModal from '../../components/common/UploadModal';
 import Checkbox from '@mui/material/Checkbox';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from 'react-router-dom';
+import ProgressModal from '../../components/common/ProgressModal';
 
 const initState = {
   dtoList: [], // product 목록
@@ -57,6 +58,8 @@ const ProductPage = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [showProgressModal, setShowProgressModal] = useState(false);
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -103,12 +106,33 @@ const ProductPage = () => {
 
   const handleFileUpload = async (file) => {
     try {
-      await registerProductExcel(file);
+      setShowProgressModal(true);
+      setUploadProgress(0);
+
+      // FormData 생성
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // 파일 업로드 요청 with progress tracking
+      await registerProductExcel(formData, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
+          setUploadProgress(progress);
+        },
+      });
+
+      // 업로드 완료 후 처리
+      setShowProgressModal(false);
       setShowUploadModal(false);
       setUploadModalOpen(true); // 성공 알림 모달
-      fetchProducts();
+      await fetchProducts(); // 목록 새로고침
     } catch (error) {
       console.error('엑셀 업로드 실패:', error);
+      setShowProgressModal(false);
+      setAlertMessage('엑셀 업로드 중 오류가 발생했습니다.');
+      setShowAlert(true);
     }
   };
 
@@ -414,6 +438,7 @@ const ProductPage = () => {
         onClose={() => setShowUploadModal(false)}
         onUpload={handleFileUpload}
       />
+      <ProgressModal open={showProgressModal} progress={uploadProgress} />
     </div>
   );
 };

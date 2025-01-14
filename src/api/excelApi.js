@@ -1,14 +1,13 @@
 import axiosInstance from './axiosInstance';
 
 // product excel register
-export const registerProductExcel = async (file) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  const response = await axiosInstance.post(
-    `/product/excel/register`,
-    formData,
-  );
-  return response.data;
+export const registerProductExcel = (formData, config) => {
+  return axiosInstance.post('/product/excel/register', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    ...config,
+  });
 };
 
 // product excel download
