@@ -45,4 +45,4 @@ jobs:
             docker rm ${{ env.REPOSITORY_NAME }} || true
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
-            docker run -d --name ${{ env.REPOSITORY_NAME }} -p 3001:100 ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
+            docker run -d --name ${{ env.REPOSITORY_NAME }} -p 100:80 ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
